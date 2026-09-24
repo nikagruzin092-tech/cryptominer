@@ -3,111 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Crypto Miner</title>
+    <title>Crypto Miner Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            background-color: #1a1a2e;
+            background-color: #12122b;
             color: #ffffff;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             user-select: none;
+            overflow-x: hidden;
         }
         h1 {
             color: #f39c12;
-            font-size: 42px;
-            margin-bottom: 10px;
+            font-size: 38px;
+            margin: 10px 0 5px 0;
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.4);
+        }
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .stat-item span {
+            color: #f1c40f;
+            font-weight: bold;
         }
         .coin-btn {
             background: radial-gradient(circle, #f39c12 0%, #d35400 100%);
             border: 4px solid #f1c40f;
             border-radius: 50%;
-            width: 180px;
-            height: 180px;
-            font-size: 70px;
+            width: 170px;
+            height: 170px;
+            font-size: 75px;
             cursor: pointer;
             outline: none;
-            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.5);
-            transition: transform 0.1s;
-            margin: 30px auto;
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.4);
+            transition: transform 0.08s ease;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
         .coin-btn:active {
             transform: scale(0.92);
         }
-        .upgrade-btn {
-            background-color: #27ae60;
+        .shop-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .shop-btn {
+            background: #1e2746;
+            border: 1px solid #34495e;
             color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 10px;
+            padding: 12px 15px;
+            border-radius: 12px;
             cursor: pointer;
-            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .shop-btn:active {
+            background: #2c3e50;
+        }
+        .shop-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .shop-info {
+            text-align: left;
+        }
+        .shop-title {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .shop-sub {
+            font-size: 12px;
+            color: #bdc3c7;
+        }
+        .shop-cost {
+            color: #f1c40f;
             font-weight: bold;
         }
-        .upgrade-btn:disabled {
-            background-color: #7f8c8d;
+        /* Вылетающий текст отклика при клике */
+        .click-pop {
+            position: absolute;
+            color: #f1c40f;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 100;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
         }
     </style>
 </head>
 <body>
 
     <h1 id="balance">0 🪙</h1>
-    <p>Доход за клик: +<span id="click-power">1</span></p>
+    
+    <div class="stats-container">
+        <div class="stat-item">Клик: +<span id="click-power">1</span></div>
+        <div class="stat-item">Доход/сек: +<span id="passive-income">0</span></div>
+    </div>
 
-    <div class="coin-btn" onclick="clickCoin()">⛏️</div>
+    <div class="coin-btn" id="coin" onclick="clickCoin(event)">⛏️</div>
 
-    <button id="upgrade-btn" class="upgrade-btn" onclick="buyUpgrade()">
-        Улучшить клик (Цена: <span id="upgrade-cost">10</span>)
-    </button>
+    <h3>Магазин оборудования</h3>
+    <div class="shop-container">
+        <button id="btn-click" class="shop-btn" onclick="buyClickUpgrade()">
+            <div class="shop-info">
+                <div class="shop-title">⚡ Мощный клик</div>
+                <div class="shop-sub">+1 к клику</div>
+            </div>
+            <div class="shop-cost" id="cost-click">10 🪙</div>
+        </button>
+
+        <button id="btn-gpu" class="shop-btn" onclick="buyGPU()">
+            <div class="shop-info">
+                <div class="shop-title">🖥️ Видеокарта GTX</div>
+                <div class="shop-sub">+1 🪙 в секунду</div>
+            </div>
+            <div class="shop-cost" id="cost-gpu">50 🪙</div>
+        </button>
+
+        <button id="btn-asic" class="shop-btn" onclick="buyASIC()">
+            <div class="shop-info">
+                <div class="shop-title">📟 Асик-майнер</div>
+                <div class="shop-sub">+5 🪙 в секунду</div>
+            </div>
+            <div class="shop-cost" id="cost-asic">250 🪙</div>
+        </button>
+
+        <button id="btn-farm" class="shop-btn" onclick="buyFarm()">
+            <div class="shop-info">
+                <div class="shop-title">🏭 Майнинг-ферма</div>
+                <div class="shop-sub">+25 🪙 в секунду</div>
+            </div>
+            <div class="shop-cost" id="cost-farm">1000 🪙</div>
+        </button>
+    </div>
 
     <script>
-        // Инициализация Telegram SDK
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) tg.expand();
 
-        // Загрузка сохранённого прогресса
+        // Состояние игры
         let balance = parseInt(localStorage.getItem('miner_balance')) || 0;
         let clickPower = parseInt(localStorage.getItem('miner_clickPower')) || 1;
-        let upgradeCost = parseInt(localStorage.getItem('miner_upgradeCost')) || 10;
+        let passiveIncome = parseInt(localStorage.getItem('miner_passiveIncome')) || 0;
+
+        let costClick = parseInt(localStorage.getItem('miner_costClick')) || 10;
+        let costGPU = parseInt(localStorage.getItem('miner_costGPU')) || 50;
+        let costASIC = parseInt(localStorage.getItem('miner_costASIC')) || 250;
+        let costFarm = parseInt(localStorage.getItem('miner_costFarm')) || 1000;
 
         function updateUI() {
-            document.getElementById('balance').innerText = balance + ' 🪙';
+            document.getElementById('balance').innerText = balance.toLocaleString() + ' 🪙';
             document.getElementById('click-power').innerText = clickPower;
-            document.getElementById('upgrade-cost').innerText = upgradeCost;
-            
-            const btn = document.getElementById('upgrade-btn');
-            btn.disabled = balance < upgradeCost;
+            document.getElementById('passive-income').innerText = passiveIncome;
+
+            document.getElementById('cost-click').innerText = costClick.toLocaleString() + ' 🪙';
+            document.getElementById('cost-gpu').innerText = costGPU.toLocaleString() + ' 🪙';
+            document.getElementById('cost-asic').innerText = costASIC.toLocaleString() + ' 🪙';
+            document.getElementById('cost-farm').innerText = costFarm.toLocaleString() + ' 🪙';
+
+            document.getElementById('btn-click').disabled = balance < costClick;
+            document.getElementById('btn-gpu').disabled = balance < costGPU;
+            document.getElementById('btn-asic').disabled = balance < costASIC;
+            document.getElementById('btn-farm').disabled = balance < costFarm;
         }
 
-        function clickCoin() {
+        function clickCoin(e) {
             balance += clickPower;
-            saveProgress();
-            updateUI();
+            
+            // Анимация текста при клике
+            const pop = document.createElement('div');
+            pop.className = 'click-pop';
+            pop.innerText = '+' + clickPower;
+            pop.style.left = (e.clientX || window.innerWidth / 2) - 15 + 'px';
+            pop.style.top = (e.clientY || window.innerHeight / 2) - 30 + 'px';
+            document.body.appendChild(pop);
+            setTimeout(() => pop.remove(), 800);
+
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
+
+            saveProgress();
+            updateUI();
         }
 
-        function buyUpgrade() {
-            if (balance >= upgradeCost) {
-                balance -= upgradeCost;
+        function buyClickUpgrade() {
+            if (balance >= costClick) {
+                balance -= costClick;
                 clickPower += 1;
-                upgradeCost = Math.floor(upgradeCost * 1.8);
+                costClick = Math.floor(costClick * 1.8);
                 saveProgress();
                 updateUI();
             }
         }
 
+        function buyGPU() {
+            if (balance >= costGPU) {
+                balance -= costGPU;
+                passiveIncome += 1;
+                costGPU = Math.floor(costGPU * 1.6);
+                saveProgress();
+                updateUI();
+            }
+        }
+
+        function buyASIC() {
+            if (balance >= costASIC) {
+                balance -= costASIC;
+                passiveIncome += 5;
+                costASIC = Math.floor(costASIC * 1.6);
+                saveProgress();
+                updateUI();
+            }
+        }
+
+        function buyFarm() {
+            if (balance >= costFarm) {
+                balance -= costFarm;
+                passiveIncome += 25;
+                costFarm = Math.floor(costFarm * 1.6);
+                saveProgress();
+                updateUI();
+            }
+        }
+
+        // Таймер пассивного дохода (каждую 1 секунду)
+        setInterval(() => {
+            if (passiveIncome > 0) {
+                balance += passiveIncome;
+                saveProgress();
+                updateUI();
+            }
+        }, 1000);
+
         function saveProgress() {
             localStorage.setItem('miner_balance', balance);
             localStorage.setItem('miner_clickPower', clickPower);
-            localStorage.setItem('miner_upgradeCost', upgradeCost);
+            localStorage.setItem('miner_passiveIncome', passiveIncome);
+            localStorage.setItem('miner_costClick', costClick);
+            localStorage.setItem('miner_costGPU', costGPU);
+            localStorage.setItem('miner_costASIC', costASIC);
+            localStorage.setItem('miner_costFarm', costFarm);
         }
 
         updateUI();
