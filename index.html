@@ -3,323 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Crypto Miner Pro</title>
+    <title>Crypto Miner</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
         body {
-            background: #0f172a;
+            background-color: #1a1a2e;
             color: #ffffff;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
-            padding: 20px 15px;
-            overflow-x: hidden;
+            padding: 20px;
+            user-select: none;
         }
-
-        .balance-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 20px;
+        h1 {
+            color: #f39c12;
+            font-size: 42px;
+            margin-bottom: 10px;
         }
-
-        .balance {
-            font-size: 36px;
-            font-weight: 800;
-            color: #f59e0b;
-            margin: 5px 0;
-            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-        }
-
-        .stats {
-            font-size: 13px;
-            color: #94a3b8;
+        .coin-btn {
+            background: radial-gradient(circle, #f39c12 0%, #d35400 100%);
+            border: 4px solid #f1c40f;
+            border-radius: 50%;
+            width: 180px;
+            height: 180px;
+            font-size: 70px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.5);
+            transition: transform 0.1s;
+            margin: 30px auto;
             display: flex;
-            justify-content: space-around;
-        }
-
-        /* Кнопка майнинга */
-        .click-area {
-            position: relative;
-            margin: 30px 0;
-            display: flex;
+            align-items: center;
             justify-content: center;
         }
-
-        .click-btn {
-            background: radial-gradient(circle, #fbbf24 0%, #d97706 100%);
-            border: 6px solid #b45309;
-            width: 170px;
-            height: 170px;
-            border-radius: 50%;
+        .coin-btn:active {
+            transform: scale(0.92);
+        }
+        .upgrade-btn {
+            background-color: #27ae60;
             color: white;
-            font-size: 40px;
-            box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
-            cursor: pointer;
-            transition: transform 0.05s ease;
-            outline: none;
-        }
-
-        .click-btn:active {
-            transform: scale(0.93);
-        }
-
-        /* Энергия */
-        .energy-box {
-            margin: 20px 0;
-        }
-
-        .energy-text {
-            font-size: 14px;
-            margin-bottom: 6px;
-            color: #cbd5e1;
-        }
-
-        .energy-bar-bg {
-            background: #1e293b;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid #334155;
-        }
-
-        .energy-bar-fill {
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
-            height: 100%;
-            width: 100%;
-            transition: width 0.2s ease;
-        }
-
-        /* Анимация вылетающих цифр */
-        .floating-text {
-            position: absolute;
-            font-size: 24px;
-            font-weight: bold;
-            color: #f59e0b;
-            pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-80px) scale(1.2);
-            }
-        }
-
-        /* Магазин */
-        .shop {
-            text-align: left;
-            margin-top: 25px;
-        }
-
-        .shop-title {
-            font-size: 18px;
-            margin-bottom: 12px;
-            color: #cbd5e1;
-        }
-
-        .shop-item {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .shop-info strong {
-            display: block;
-            font-size: 15px;
-        }
-
-        .shop-info small {
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-        .buy-btn {
-            background: #10b981;
             border: none;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 10px;
             cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
         }
-
-        .buy-btn:disabled {
-            background: #334155;
-            color: #64748b;
+        .upgrade-btn:disabled {
+            background-color: #7f8c8d;
         }
     </style>
 </head>
 <body>
 
-    <div class="balance-card">
-        <div class="balance"><span id="coins">0</span> 🪙</div>
-        <div class="stats">
-            <span>⚡ За клик: <b><span id="cpc">1</span></b></span>
-            <span>⛏️ В секунду: <b><span id="cps">0</span></b></span>
-        </div>
-    </div>
+    <h1 id="balance">0 🪙</h1>
+    <p>Доход за клик: +<span id="click-power">1</span></p>
 
-    <div class="click-area" id="clickArea">
-        <button class="click-btn" id="mineBtn">⚡</button>
-    </div>
+    <div class="coin-btn" onclick="clickCoin()">⛏️</div>
 
-    <div class="energy-box">
-        <div class="energy-text">Энергия: <span id="energy">100</span> / <span id="maxEnergy">100</span></div>
-        <div class="energy-bar-bg">
-            <div class="energy-bar-fill" id="energyFill"></div>
-        </div>
-    </div>
-
-    <div class="shop">
-        <div class="shop-title">Улучшения</div>
-        
-        <div class="shop-item">
-            <div class="shop-info">
-                <strong>Мощный тап</strong>
-                <small>+1 к клику | Цена: <span id="clickCost">10</span> 🪙</small>
-            </div>
-            <button class="buy-btn" id="buyClickBtn" onclick="buyClick()">Купить</button>
-        </div>
-
-        <div class="shop-item">
-            <div class="shop-info">
-                <strong>Майнинг-ферма</strong>
-                <small>+1 в сек | Цена: <span id="gpuCost">50</span> 🪙</small>
-            </div>
-            <button class="buy-btn" id="buyGpuBtn" onclick="buyGPU()">Купить</button>
-        </div>
-    </div>
+    <button id="upgrade-btn" class="upgrade-btn" onclick="buyUpgrade()">
+        Улучшить клик (Цена: <span id="upgrade-cost">10</span>)
+    </button>
 
     <script>
-        // Данные игры
-        let coins = Number(localStorage.getItem('coins')) || 0;
-        let cpc = Number(localStorage.getItem('cpc')) || 1;
-        let cps = Number(localStorage.getItem('cps')) || 0;
-        let clickCost = Number(localStorage.getItem('clickCost')) || 10;
-        let gpuCost = Number(localStorage.getItem('gpuCost')) || 50;
-        
-        let energy = Number(localStorage.getItem('energy')) || 100;
-        let maxEnergy = 100;
+        // Инициализация Telegram SDK
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) tg.expand();
 
-        const mineBtn = document.getElementById('mineBtn');
-        const clickArea = document.getElementById('clickArea');
-
-        // Создаем звуковой клик через Web Audio API (без внешних файлов)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playClickSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
-        }
+        // Загрузка сохранённого прогресса
+        let balance = parseInt(localStorage.getItem('miner_balance')) || 0;
+        let clickPower = parseInt(localStorage.getItem('miner_clickPower')) || 1;
+        let upgradeCost = parseInt(localStorage.getItem('miner_upgradeCost')) || 10;
 
         function updateUI() {
-            document.getElementById('coins').innerText = Math.floor(coins);
-            document.getElementById('cpc').innerText = cpc;
-            document.getElementById('cps').innerText = cps;
-            document.getElementById('clickCost').innerText = clickCost;
-            document.getElementById('gpuCost').innerText = gpuCost;
+            document.getElementById('balance').innerText = balance + ' 🪙';
+            document.getElementById('click-power').innerText = clickPower;
+            document.getElementById('upgrade-cost').innerText = upgradeCost;
             
-            document.getElementById('energy').innerText = Math.floor(energy);
-            document.getElementById('maxEnergy').innerText = maxEnergy;
-            document.getElementById('energyFill').style.width = (energy / maxEnergy * 100) + '%';
-
-            // Блокировка кнопок если не хватает денег
-            document.getElementById('buyClickBtn').disabled = coins < clickCost;
-            document.getElementById('buyGpuBtn').disabled = coins < gpuCost;
-
-            // Сохранение
-            localStorage.setItem('coins', coins);
-            localStorage.setItem('cpc', cpc);
-            localStorage.setItem('cps', cps);
-            localStorage.setItem('clickCost', clickCost);
-            localStorage.setItem('gpuCost', gpuCost);
-            localStorage.setItem('energy', energy);
+            const btn = document.getElementById('upgrade-btn');
+            btn.disabled = balance < upgradeCost;
         }
 
-        // Вылетающие цифры +1, +2
-        function createFloatingText(x, y, text) {
-            const el = document.createElement('div');
-            el.className = 'floating-text';
-            el.innerText = '+' + text;
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            clickArea.appendChild(el);
-
-            setTimeout(() => el.remove(), 800);
-        }
-
-        // Клик/Тап
-        mineBtn.addEventListener('click', (e) => {
-            if (energy >= 1) {
-                coins += cpc;
-                energy -= 1;
-                
-                playClickSound();
-
-                // Координаты для эффекта
-                const rect = clickArea.getBoundingClientRect();
-                const x = e.clientX ? (e.clientX - rect.left) : (rect.width / 2);
-                const y = e.clientY ? (e.clientY - rect.top) : (rect.height / 2);
-                
-                createFloatingText(x - 10, y - 20, cpc);
-                updateUI();
-            }
-        });
-
-        function buyClick() {
-            if (coins >= clickCost) {
-                coins -= clickCost;
-                cpc += 1;
-                clickCost = Math.round(clickCost * 1.6);
-                updateUI();
-            }
-        }
-
-        function buyGPU() {
-            if (coins >= gpuCost) {
-                coins -= gpuCost;
-                cps += 1;
-                gpuCost = Math.round(gpuCost * 1.7);
-                updateUI();
-            }
-        }
-
-        // Таймер: пассивный доход + восстановление энергии
-        setInterval(() => {
-            coins += cps;
-            if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 1); // +1 энергии в сек
-            }
+        function clickCoin() {
+            balance += clickPower;
+            saveProgress();
             updateUI();
-        }, 1000);
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function buyUpgrade() {
+            if (balance >= upgradeCost) {
+                balance -= upgradeCost;
+                clickPower += 1;
+                upgradeCost = Math.floor(upgradeCost * 1.8);
+                saveProgress();
+                updateUI();
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('miner_balance', balance);
+            localStorage.setItem('miner_clickPower', clickPower);
+            localStorage.setItem('miner_upgradeCost', upgradeCost);
+        }
 
         updateUI();
     </script>
