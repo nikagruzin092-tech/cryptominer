@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
->
+<head>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Miner</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -19,26 +19,6 @@
         h1 {
             color: #f39c12;
             font-size: 42px;
-            margin-bottom: 10px;
-        }
-        .coin-btn {
-            background: radial-gradient(circle, #f39c12 0%, #d35400 100%);
-            border: 4px solid #f1c40f;
-            border-radius: 50%;
-            width: 180px;
-            height: 180px;
-            font-size: 70px;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.5);
-            transition: transform 0.1s;
-            margin: 30px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .coin-btn:active {
-            transform: scale(0.92);
         }
         .upgrade-btn {
             background-color: #27ae60;
@@ -58,7 +38,7 @@
 </head>
 <body>
 
-    <h1 id="balance">0 🪙</h1>
+    <h1 id="balance">0 🟡</h1>
     <p>Доход за клик: +<span id="click-power">1</span></p>
 
     <div class="coin-btn" onclick="clickCoin()">⛏️</div>
@@ -66,8 +46,10 @@
     <button id="upgrade-btn" class="upgrade-btn" onclick="buyUpgrade()">
         Улучшить клик (Цена: <span id="upgrade-cost">10</span>)
     </button>
-<button class="upgrade-btn" onclick="showRewardedAd()" style="background-color: #8e44ad;">🎁 Бонус +500 монет</button>
-
+    
+    <button class="upgrade-btn" onclick="showRewardedAd()" style="background-color: #8e44ad;">
+        🎁 Бонус +500 монет
+    </button>
 
     <script>
         // Инициализация Telegram SDK
@@ -80,10 +62,10 @@
         let upgradeCost = parseInt(localStorage.getItem('miner_upgradeCost')) || 10;
 
         function updateUI() {
-            document.getElementById('balance').innerText = balance + ' 🪙';
+            document.getElementById('balance').innerText = balance + " 🟡";
             document.getElementById('click-power').innerText = clickPower;
             document.getElementById('upgrade-cost').innerText = upgradeCost;
-            
+
             const btn = document.getElementById('upgrade-btn');
             btn.disabled = balance < upgradeCost;
         }
@@ -101,7 +83,7 @@
             if (balance >= upgradeCost) {
                 balance -= upgradeCost;
                 clickPower += 1;
-                upgradeCost = Math.floor(upgradeCost * 1.8);
+                upgradeCost = Math.floor(upgradeCost * 1.5);
                 saveProgress();
                 updateUI();
             }
@@ -114,27 +96,27 @@
         }
 
         updateUI();
-   // Инициализация рекламы с вашим Block ID (49691)
-const adController = window.Adsgram.init({ blockId: "49691" });
 
+        // Инициализация рекламы Adsgram с вашим Block ID (49691)
+        const adController = window.Adsgram.init({ blockId: "49691" });
 
-function showRewardedAd() {
-    adController.show()
-        .then((result) => {
-            // Пользователь успешно досмотрел рекламу до конца!
-            balance += 500; // Награда: 500 монет
-            saveProgress();
-            updateUI();
-            
-            // Виброотклик
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        })
-        .catch((result) => {
-            console.log("Реклама не была досмотрена", result);
-        });
-}
- </script>
+        function showRewardedAd() {
+            adController.show()
+                .then((result) => {
+                    // Пользователь успешно досмотрел рекламу — выдаем награду
+                    balance += 500; 
+                    saveProgress();
+                    updateUI();
+
+                    // Виброотклик при успехе
+                    if (tg && tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('success');
+                    }
+                })
+                .catch((result) => {
+                    console.log("Реклама не была досмотрена");
+                });
+        }
+    </script>
 </body>
 </html>
