@@ -26,20 +26,20 @@
         /* Верхняя панель с кнопками меню */
         .top-menu {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             width: 100%;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .menu-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: #e0f7fa;
-            padding: 8px 12px;
-            font-size: 13px;
-            border-radius: 12px;
+            padding: 6px 10px;
+            font-size: 11px;
+            border-radius: 10px;
             cursor: pointer;
             font-family: inherit;
             transition: background 0.2s;
@@ -51,20 +51,20 @@
 
         h1 {
             color: #ffd700;
-            font-size: 46px;
-            margin: 10px 0 5px 0;
+            font-size: 42px;
+            margin: 5px 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             font-weight: bold;
         }
 
         .level-indicator {
-            font-size: 14px;
+            font-size: 13px;
             color: #81d4fa;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .income-info {
-            font-size: 13px;
+            font-size: 12px;
             color: #a7ffeb;
         }
 
@@ -72,11 +72,11 @@
         .clicker-container {
             position: relative;
             display: inline-block;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .coin-btn {
-            font-size: 130px;
+            font-size: 120px;
             cursor: pointer;
             filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
             transition: transform 0.1s ease;
@@ -93,7 +93,7 @@
             top: 20%;
             transform: translateX(-50%);
             color: #00ffcc;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             pointer-events: none;
             animation: floatUp 0.8s ease-out forwards;
@@ -111,16 +111,16 @@
             max-width: 350px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 5px;
         }
 
         .upgrade-btn {
             background: linear-gradient(45deg, #ff416c, #ff4b2b);
             color: white;
             border: 2px solid rgba(255,255,255,0.3);
-            padding: 14px 20px;
-            font-size: 16px;
+            padding: 12px 20px;
+            font-size: 15px;
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
@@ -176,14 +176,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .modal-header h3 {
             margin: 0;
             color: #ffd700;
+            font-size: 18px;
         }
 
         .close-btn {
@@ -199,11 +200,21 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 10px;
             border-radius: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
+        }
+
+        .ref-link-box {
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            word-break: break-all;
+            margin-bottom: 10px;
+            color: #a7ffeb;
         }
 
         @keyframes fadeIn {
@@ -216,8 +227,10 @@
 
     <!-- Верхнее меню -->
     <div class="top-menu">
-        <button class="menu-btn" onclick="openModal('ratingModal')">🏆 Рейтинг</button>
+        <button class="menu-btn" onclick="openModal('ratingModal')">🏆 Топ</button>
         <button class="menu-btn" onclick="openModal('boostsModal')">⚡ Бусты</button>
+        <button class="menu-btn" onclick="openModal('refModal')">👥 Рефералы</button>
+        <button class="menu-btn" onclick="openModal('withdrawModal')">💸 Вывод</button>
         <button class="menu-btn" onclick="openModal('settingsModal')">⚙️ Меню</button>
     </div>
 
@@ -231,7 +244,7 @@
             <div class="coin-btn" onclick="clickCoin(event)">⛏️</div>
         </div>
 
-        <p style="margin: 0; font-size: 14px;">Клик: +<span id="click-power">1</span></p>
+        <p style="margin: 0; font-size: 13px;">Клик: +<span id="click-power">1</span></p>
     </div>
 
     <!-- Кнопки действий -->
@@ -255,7 +268,7 @@
             <div class="modal-item"><span>1. CryptoKing</span> <b>152,400 🟡</b></div>
             <div class="modal-item"><span>2. Satoshi_G</span> <b>98,250 🟡</b></div>
             <div class="modal-item"><span>3. Miner_Pro</span> <b>74,100 🟡</b></div>
-            <div class="modal-item" style="border: 1px solid #ffd700;"><span>Вы (Вы)</span> <b id="top-my-score">0 🟡</b></div>
+            <div class="modal-item" style="border: 1px solid #ffd700;"><span>Вы</span> <b id="top-my-score">0 🟡</b></div>
         </div>
     </div>
 
@@ -266,27 +279,58 @@
                 <h3>⚡ Авто-майнеры</h3>
                 <button class="close-btn" onclick="closeModal('boostsModal')">&times;</button>
             </div>
-            <p style="font-size: 12px; color: #a7ffeb;">Дают пассивный доход каждую минуту:</p>
+            <p style="font-size: 12px; color: #a7ffeb;">Пассивный доход в минуту:</p>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="upgrade-btn" style="font-size: 14px; padding: 10px;" onclick="buyAutoMiner(50, 5)">
+                <button class="upgrade-btn" style="font-size: 13px; padding: 10px;" onclick="buyAutoMiner(50, 5)">
                     Дрон ( +5/мин ) <br>Цена: 50 🟡
                 </button>
-                <button class="upgrade-btn" style="font-size: 14px; padding: 10px;" onclick="buyAutoMiner(300, 30)">
-                    Буровая установка ( +30/мин ) <br>Цена: 300 🟡
+                <button class="upgrade-btn" style="font-size: 13px; padding: 10px;" onclick="buyAutoMiner(300, 30)">
+                    Буровая ( +30/мин ) <br>Цена: 300 🟡
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: НАСТРОЙКИ / МЕНЮ -->
+    <!-- МОДАЛЬНОЕ ОКНО: РЕФЕРАЛЫ -->
+    <div id="refModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👥 Реферальная система</h3>
+                <button class="close-btn" onclick="closeModal('refModal')">&times;</button>
+            </div>
+            <p style="font-size: 12px; color: #a7ffeb;">Приглашайте друзей и получайте по 500 монет за каждого!</p>
+            <div class="ref-link-box" id="ref-link">https://t.me/your_bot/app?start=ref123</div>
+            <button class="upgrade-btn" style="font-size: 13px; padding: 10px;" onclick="copyRefLink()">
+                📋 Копировать ссылку
+            </button>
+            <p style="font-size: 12px; margin-top: 10px;">Приглашено друзей: <b id="ref-count">0</b></p>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: ВЫВОД СРЕДСТВ -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💸 Вывод средств</h3>
+                <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <p style="font-size: 12px; color: #a7ffeb;">Минимальная сумма для вывода: 10,000 🟡</p>
+            <div class="modal-item"><span>Доступно:</span> <b id="withdraw-balance">0 🟡</b></div>
+            <button class="upgrade-btn" style="font-size: 13px; padding: 10px; background: #27ae60;" onclick="requestWithdraw()">
+                Запросить вывод
+            </button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: НАСТРОЙКИ -->
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>⚙️ Настройки</h3>
+                <h3>⚙️ Меню</h3>
                 <button class="close-btn" onclick="closeModal('settingsModal')">&times;</button>
             </div>
-            <p style="font-size: 13px;">Telegram ID: <span id="tg-id">Не определен</span></p>
-            <button class="upgrade-btn" style="background: #c0392b; font-size: 14px; padding: 10px; margin-top: 10px;" onclick="resetProgress()">
+            <p style="font-size: 12px;">Telegram ID: <span id="tg-id">Не определен</span></p>
+            <button class="upgrade-btn" style="background: #c0392b; font-size: 13px; padding: 10px; margin-top: 10px;" onclick="resetProgress()">
                 🔄 Сбросить прогресс
             </button>
         </div>
@@ -294,12 +338,17 @@
 
     <script>
         const tg = window.Telegram ? window.Telegram.WebApp : null;
+        let userId = "12345";
         if (tg) {
             tg.expand();
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                document.getElementById('tg-id').innerText = tg.initDataUnsafe.user.id;
+                userId = tg.initDataUnsafe.user.id;
+                document.getElementById('tg-id').innerText = userId;
             }
         }
+
+        // Генерация реферальной ссылки
+        document.getElementById('ref-link').innerText = `https://t.me/share/url?url=https://t.me/your_bot_name/app?start=ref_${userId}`;
 
         // Данные игры
         let balance = parseInt(localStorage.getItem('miner_balance')) || 0;
@@ -307,6 +356,7 @@
         let upgradeCost = parseInt(localStorage.getItem('miner_upgradeCost')) || 10;
         let currentLevel = parseInt(localStorage.getItem('miner_level')) || 1;
         let passiveIncome = parseInt(localStorage.getItem('miner_passive')) || 0;
+        let refCount = parseInt(localStorage.getItem('miner_refs')) || 0;
 
         function updateUI() {
             document.getElementById('balance').innerText = balance + " 🟡";
@@ -315,6 +365,8 @@
             document.getElementById('level-val').innerText = currentLevel;
             document.getElementById('passive-income').innerText = passiveIncome;
             document.getElementById('top-my-score').innerText = balance + " 🟡";
+            document.getElementById('withdraw-balance').innerText = balance + " 🟡";
+            document.getElementById('ref-count').innerText = refCount;
 
             const btn = document.getElementById('upgrade-btn');
             btn.disabled = balance < upgradeCost;
@@ -367,6 +419,22 @@
             }
         }
 
+        function copyRefLink() {
+            const linkText = `https://t.me/your_bot_name/app?start=ref_${userId}`;
+            navigator.clipboard.writeText(linkText).then(() => {
+                alert("Реферальная ссылка скопирована в буфер обмена!");
+            });
+        }
+
+        function requestWithdraw() {
+            if (balance < 10000) {
+                alert("Недостаточно монет для вывода! Минимальная сумма: 10,000 🟡");
+            } else {
+                alert("Запрос на вывод отправлен! Ожидайте обработки.");
+                closeModal('withdrawModal');
+            }
+        }
+
         // Пассивный доход каждую минуту
         setInterval(() => {
             if (passiveIncome > 0) {
@@ -382,6 +450,7 @@
             localStorage.setItem('miner_upgradeCost', upgradeCost);
             localStorage.setItem('miner_level', currentLevel);
             localStorage.setItem('miner_passive', passiveIncome);
+            localStorage.setItem('miner_refs', refCount);
         }
 
         function resetProgress() {
@@ -423,4 +492,3 @@
     </script>
 </body>
 </html>
-
