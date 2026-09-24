@@ -4,67 +4,100 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Miner</title>
+    <title>Космический Майнер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            background-color: #1a1a2e;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0f7fa;
+            font-family: 'Courier New', Courier, monospace;
             text-align: center;
             margin: 0;
             padding: 20px;
             user-select: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         h1 {
-            color: #f39c12;
-            font-size: 42px;
-        }
-        .upgrade-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 15px;
+            color: #ffd700;
+            font-size: 54px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             font-weight: bold;
         }
+        .level-indicator {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #81d4fa;
+        }
+        .coin-btn {
+            font-size: 150px;
+            cursor: pointer;
+            margin: 40px 0;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+        .upgrade-btn {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .upgrade-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
         .upgrade-btn:disabled {
-            background-color: #7f8c8d;
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
 
     <h1 id="balance">0 🟡</h1>
+    <div class="level-indicator">Уровень 1</div>
     <p>Доход за клик: +<span id="click-power">1</span></p>
 
     <div class="coin-btn" onclick="clickCoin()">⛏️</div>
 
     <button id="upgrade-btn" class="upgrade-btn" onclick="buyUpgrade()">
-        Улучшить клик (Цена: <span id="upgrade-cost">10</span>)
+        Улучшить (Цена: <span id="upgrade-cost">10</span>)
     </button>
-    
-    <button class="upgrade-btn" onclick="showRewardedAd()" style="background-color: #8e44ad;">
-        🎁 Бонус +500 монет
+
+    <button class="upgrade-btn" onclick="showRewardedAd()" style="background: linear-gradient(45deg, #8e44ad, #6c3483); border-color: #e0f7fa;">
+        💎 СМОТРЕТЬ ЗА +100 монет
     </button>
 
     <script>
-        // Инициализация Telegram SDK
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) tg.expand();
 
-        // Загрузка сохранённого прогресса
         let balance = parseInt(localStorage.getItem('miner_balance')) || 0;
         let clickPower = parseInt(localStorage.getItem('miner_clickPower')) || 1;
         let upgradeCost = parseInt(localStorage.getItem('miner_upgradeCost')) || 10;
+        let currentLevel = 1;
 
         function updateUI() {
             document.getElementById('balance').innerText = balance + " 🟡";
             document.getElementById('click-power').innerText = clickPower;
             document.getElementById('upgrade-cost').innerText = upgradeCost;
+            document.querySelector('.level-indicator').innerText = "Уровень " + currentLevel;
 
             const btn = document.getElementById('upgrade-btn');
             btn.disabled = balance < upgradeCost;
@@ -84,6 +117,7 @@
                 balance -= upgradeCost;
                 clickPower += 1;
                 upgradeCost = Math.floor(upgradeCost * 1.5);
+                currentLevel += 1;
                 saveProgress();
                 updateUI();
             }
@@ -97,18 +131,15 @@
 
         updateUI();
 
-        // Инициализация рекламы Adsgram с вашим Block ID (49691)
         const adController = window.Adsgram.init({ blockId: "49691" });
 
         function showRewardedAd() {
             adController.show()
                 .then((result) => {
-                    // Пользователь успешно досмотрел рекламу — выдаем награду
-                    balance += 500; 
+                    balance += 100;
                     saveProgress();
                     updateUI();
 
-                    // Виброотклик при успехе
                     if (tg && tg.HapticFeedback) {
                         tg.HapticFeedback.notificationOccurred('success');
                     }
