@@ -20,6 +20,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
         h1 {
             color: #ffd700;
@@ -33,12 +34,51 @@
             font-size: 14px;
             color: #81d4fa;
         }
-        .coin-btn {
-            font-size: 150px;
-            cursor: pointer;
+        
+        /* Контейнер для монетки и всплывающих цифр */
+        .clicker-container {
+            position: relative;
+            display: inline-block;
             margin: 40px 0;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
         }
+
+        .coin-btn {
+            font-size: 140px;
+            cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+            transition: transform 0.1s ease;
+            display: inline-block;
+        }
+        
+        .coin-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Анимация всплывающих чисел */
+        .floating-number {
+            position: absolute;
+            left: 50%;
+            top: 20%;
+            transform: translateX(-50%);
+            color: #00ffcc;
+            font-size: 28px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 0 5px rgba(0, 255, 204, 0.8);
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -80px) scale(1.2);
+            }
+        }
+
         .upgrade-btn {
             background: linear-gradient(45deg, #ff416c, #ff4b2b);
             color: white;
@@ -74,7 +114,10 @@
     <div class="level-indicator">Уровень 1</div>
     <p>Доход за клик: +<span id="click-power">1</span></p>
 
-    <div class="coin-btn" onclick="clickCoin()">⛏️</div>
+    <!-- Обертка для кликера с анимацией -->
+    <div class="clicker-container" id="clicker-container">
+        <div class="coin-btn" onclick="clickCoin(event)">⛏️</div>
+    </div>
 
     <button id="upgrade-btn" class="upgrade-btn" onclick="buyUpgrade()">
         Улучшить (Цена: <span id="upgrade-cost">10</span>)
@@ -103,13 +146,35 @@
             btn.disabled = balance < upgradeCost;
         }
 
-        function clickCoin() {
+        function clickCoin(event) {
             balance += clickPower;
             saveProgress();
             updateUI();
+
+            // Создаем всплывающую цифру в месте клика
+            showFloatingNumber(event);
+
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
+        }
+
+        function showFloatingNumber(event) {
+            const container = document.getElementById('clicker-container');
+            const numEl = document.createElement('div');
+            numEl.className = 'floating-number';
+            numEl.innerText = "+" + clickPower;
+
+            // Рандомим небольшое смещение по горизонтали, чтобы цифры не сливались
+            const randomX = (Math.random() - 0.5) * 40;
+            numEl.style.left = `calc(50% + ${randomX}px)`;
+
+            container.appendChild(numEl);
+
+            // Удаляем элемент после завершения анимации (0.8с)
+            setTimeout(() => {
+                numEl.remove();
+            }, 800);
         }
 
         function buyUpgrade() {
