@@ -557,17 +557,116 @@
             alert("Энергия сокола полностью восстановлена!");
         }
 
-        function requestWithdraw() {
-            const address = document.getElementById('tonAddress').value.trim();
-            const amount = parseInt(document.getElementById('withdrawAmount').value);
-            const minWithdraw = 50000;
+      function requestWithdraw() {
+            try {
+                const addressInput = document.getElementById('tonAddress');
+                const amountInput = document.getElementById('withdrawAmount');
+                
+                if (!addressInput || !amountInput) {
+                    alert("Ошибка: элементы формы не найдены.");
+                    return;
+                }
 
-            if (!address) {
-                alert("Пожалуйста, введите адрес TON кошелька!");
+                const address = addressInput.value.trim();
+                const amount = parseInt(amountInput.value);
+                const minWithdraw = 50000;
+
+                if (!address) {
+                    alert("Пожалуйста, введите адрес TON кошелька!");
+                    return;
+                }
+
+                if (isNaN(amount) || amount < minWithdraw) {
+                    alert("Минимальная сумма для вывода составляет 50,000 🦅!");
+                    return;
+                }
+
+                if (score < amount) {
+                    alert("Недостаточно средств на балансе для вывода!");
+                    return;
+                }
+
+                score -= amount;
+                updateUI();
+                closeModal('withdrawModal');
+                alert("Заявка на вывод успешно создана!");
+
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            } catch (err) {
+                console.error("Ошибка при выводе:", err);
+                alert("Произошла ошибка при отправке заявки.");
+            }
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+
+        function switchNav(index) {
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach((item, idx) => {
+                if (idx === index) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+        }
+
+        function claimDailyBonus() {
+            const now = Date.now();
+            if (now - lastDailyClaim < 86400000) {
+                alert("Ежедневный бонус уже получен! Ждите 24 часа.");
                 return;
             }
+            lastDailyClaim = now;
+            score += 1000;
+            updateUI();
+            alert("Вы получили ежедневный бонус +1000 🦅!");
+        }
 
-            if (isNaN(amount) || amount < minWithdraw) {
-                alert("Минимальная сумма для вывода составляет 50,000 🦅!");
-                return;}
+        function showRewardedAd() {
+            if (typeof Adsgram !== 'undefined') {
+                Adsgram.init({ blockId: "int-0000" }).show().then(() => {
+                    score += 50;
+                    updateUI();
+                    alert("Вы получили +50 🦅 за просмотр рекламы!");
+                }).catch((result) => {
+                    alert("Реклама не была досмотрена.");
+                });
+            } else {
+                score += 50;
+                updateUI();
+                alert("Рекламный блок в разработке, но бонус +50 🦅 начислен!");
             }
+        }
+
+        function copyRefLink() {
+            const link = "https://t.me/YourBotName?start=" + userId;
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Реферальная ссылка скопирована в буфер обмена!");
+            }).catch(() => {
+                alert("Не удалось скопировать ссылку.");
+            });
+        }
+
+        function completeTask(reward, btn) {
+            score += reward;
+            updateUI();
+            btn.innerText = "Выполнено";
+            btn.disabled = true;
+            btn.style.background = "#808b97";
+            alert("Задание выполнено! Получено +" + reward + " 🦅");
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
+
+   
