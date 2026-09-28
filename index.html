@@ -17,109 +17,267 @@
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <header>
-      <h1>🦅 TON Falcon</h1>
-      <p>Mining Clicker</p>
-    </header>
+  <!-- Верхняя панель -->
+  <div class="top">
+    <span>🦅 TON Falcon</span>
+    <b>$TONF</b>
+    <strong id="level">LVL 0</strong>
+  </div>
 
-    <main>
+  <!-- Карточки -->
+  <div class="cards">
 
-      <section class="balance-card">
-        <div class="label">Баланс</div>
+    <button onclick="boost()">
+      ⚡
+      <small id="energy">100/100</small>
+      <em>Энергия</em>
+    </button>
 
-        <div id="balance" class="balance">
-          0
-        </div>
+    <button onclick="upgrade()">
+      ⛏
+      <small id="power">1</small>
+      <em>Сила</em>
+    </button>
 
-        <div class="currency">
-          $TONF
-        </div>
-      </section>
-
-      <section class="stats">
-
-        <div class="stat">
-          <span>⚡ Энергия</span>
-          <strong id="energy">100/100</strong>
-        </div>
-
-        <div class="stat">
-          <span>⛏ Сила</span>
-          <strong id="power">1</strong>
-        </div>
-
-        <div class="stat">
-          <span>⭐ Уровень</span>
-          <strong id="level">0</strong>
-        </div>
-
-      </section>
-
-      <button
-        class="mine-button"
-        onclick="mine()"
-      >
-        ⛏ МАЙНИТЬ
-      </button>
-
-      <section class="buttons">
-
-        <button onclick="upgrade()">
-          ⬆️ Улучшить
-        </button>
-
-        <button onclick="boost()">
-          ⚡ Восстановить энергию
-        </button>
-
-        <button onclick="daily()">
-          🎁 Ежедневный бонус
-        </button>
-
-        <button onclick="rewardedAd()">
-          📺 Смотреть рекламу
-        </button>
-
-      </section>
-
-      <section class="withdraw-card">
-
-        <h2>💰 Вывод</h2>
-
-        <input
-          id="withdrawAmount"
-          type="number"
-          placeholder="Сумма"
-          min="150000"
-        >
-
-        <input
-          id="withdrawWallet"
-          type="text"
-          placeholder="TON кошелёк"
-        >
-
-        <button onclick="withdraw()">
-          💸 Создать заявку
-        </button>
-
-        <small>
-          Минимальная сумма: 150000 TONF
-        </small>
-
-      </section>
-
-    </main>
-
-    <footer>
-      TON Falcon
-    </footer>
+    <button onclick="daily()">
+      🎁
+      <small>+1000</small>
+      <em>Бонус</em>
+    </button>
 
   </div>
 
-  <script src="app.js"></script>
+  <!-- Баланс -->
+  <div class="balance">
+    <span id="balance">0</span>
+  </div>
+
+  <!-- Майнинг -->
+  <div class="miner">
+    <button onclick="mine()">
+      🦅
+    </button>
+  </div>
+
+  <!-- Энергия -->
+  <div class="energy">
+
+    <div>
+      <span>Энергия</span>
+
+      <button onclick="boost()">
+        Восстановить
+      </button>
+
+      <span id="energyText">100/100</span>
+    </div>
+
+    <div class="bar">
+      <i id="energyBar"></i>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Нижнее меню -->
+<nav>
+
+  <button class="active" onclick="closeAllModals()">
+    ⛏
+    <small>Майнинг</small>
+  </button>
+
+  <button onclick="openEarn()">
+    🎁
+    <small>Заработок</small>
+  </button>
+
+  <button onclick="rewardedAd()">
+    📺
+    <small>Реклама</small>
+  </button>
+
+  <button onclick="openWithdraw()">
+    💰
+    <small>Вывод</small>
+  </button>
+
+  <button onclick="openFriends()">
+    👥
+    <small>Друзья</small>
+  </button>
+
+</nav>
+
+<!-- Заработок -->
+<div class="modal" id="earnModal">
+
+  <div class="box">
+
+    <button class="x" onclick="closeEarn()">×</button>
+
+    <h3>🎁 Заработок</h3>
+
+    <p>
+      Получай дополнительные $TONF.
+    </p>
+
+    <button
+      class="primary"
+      onclick="daily(); closeEarn();"
+    >
+      🎁 Получить ежедневный бонус
+    </button>
+
+    <button
+      class="primary"
+      onclick="rewardedAd(); closeEarn();"
+    >
+      📺 Смотреть рекламу
+    </button>
+
+  </div>
+
+</div>
+
+<!-- Вывод -->
+<div class="modal" id="withdrawModal">
+
+  <div class="box">
+
+    <button class="x" onclick="closeWithdraw()">×</button>
+
+    <h3>💰 Вывод $TONF</h3>
+
+    <p>
+      Минимальная сумма: 150000 TONF
+    </p>
+
+    <input
+      id="withdrawAmount"
+      type="number"
+      placeholder="Сумма"
+      min="150000"
+    >
+
+    <input
+      id="withdrawWallet"
+      type="text"
+      placeholder="TON кошелёк"
+      autocomplete="off"
+    >
+
+    <button
+      class="primary"
+      onclick="withdraw()"
+    >
+      💸 Создать заявку
+    </button>
+
+  </div>
+
+</div>
+
+<!-- Друзья -->
+<div class="modal" id="friendsModal">
+
+  <div class="box">
+
+    <button class="x" onclick="closeFriends()">×</button>
+
+    <h3>👥 Друзья</h3>
+
+    <p>
+      Приглашай друзей в TON Falcon.
+    </p>
+
+    <button
+      class="primary"
+      onclick="shareBot()"
+    >
+      📤 Пригласить друга
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+  function closeAllModals() {
+    document.querySelectorAll(".modal").forEach(function(modal) {
+      modal.style.display = "none";
+    });
+  }
+
+  function openEarn() {
+    document.getElementById("earnModal").style.display = "flex";
+  }
+
+  function closeEarn() {
+    document.getElementById("earnModal").style.display = "none";
+  }
+
+  function openWithdraw() {
+    document.getElementById("withdrawModal").style.display = "flex";
+  }
+
+  function closeWithdraw() {
+    document.getElementById("withdrawModal").style.display = "none";
+  }
+
+  function openFriends() {
+    document.getElementById("friendsModal").style.display = "flex";
+  }
+
+  function closeFriends() {
+    document.getElementById("friendsModal").style.display = "none";
+  }
+
+  function shareBot() {
+    const url = "https://t.me/my_crypto_miner_game_bot";
+
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.openTelegramLink(
+        "https://t.me/share/url?url=" +
+        encodeURIComponent(url)
+      );
+    }
+  }
+
+  // Обновляем полоску энергии после получения состояния
+  const oldRender = window.render;
+
+  window.render = function() {
+    if (typeof oldRender === "function") {
+      oldRender();
+    }
+
+    const energy = document.getElementById("energy");
+    const energyText = document.getElementById("energyText");
+    const energyBar = document.getElementById("energyBar");
+
+    if (window.state) {
+      const current = Number(window.state.energy || 0);
+      const max = Number(window.state.maxEnergy || 100);
+
+      if (energy) {
+        energy.textContent = current + "/" + max;
+      }
+
+      if (energyText) {
+        energyText.textContent = current + "/" + max;
+      }
+
+      if (energyBar) {
+        energyBar.style.width =
+          Math.max(0, Math.min(100, current / max * 100)) + "%";
+      }
+    }
+  };
+</script>
 
 </body>
 </html>
