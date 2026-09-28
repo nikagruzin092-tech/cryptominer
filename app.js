@@ -1,58 +1,116 @@
-const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();}
-const API="/api";
-let state=null;
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
 
-async function api(path, options={}){
-  const headers={"Content-Type":"application/json",...(options.headers||{})};
-  const initData=tg?.initData||"";
-  headers["X-Telegram-Init-Data"]=initData;
-  const r=await fetch(API+path,{...options,headers});
-  const data=await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(data.error||"Ошибка сервера");
+const API = "/api";
+let state = null;
+let ad = null;
+
+const $ = (id) => document.getElementById(id);
+
+function showError(message) {
+  console.error(message);
+  if (tg?.showAlert) tg.showAlert(String(message));
+  else alert(String(message));
+}
+
+async function api(path, options = {}) {
+  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  headers["X-Telegram-Init-Data"] = tg?.initData || "";
+  const res = await fetch(API + path, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
 }
-function render(){
- if(!state)return;
- balance.textContent=Number(state.balance).toLocaleString();
- energy.textContent=`${state.energy}/${state.maxEnergy}`;
- energyBar.style.width=`${state.energy/state.maxEnergy*100}%`;
- profit.textContent="+"+state.passive;
- level.textContent=state.level;
- cost.textContent=state.upgradeCost.toLocaleString();
- refs.textContent=state.referrals;
- daily.textContent=state.dailyAvailable?"Доступно":"Завтра";
+
+function render() {
+  if (!state) return;
+  if ($("balance")) $("balance").textContent = Number(state.balance).toLocaleString();
+  if ($("energy")) $("energy").textContent = `${state.energy}/${state.maxEnergy}`;
+  if ($("power")) $("power").textContent = state.power;
+  if ($("level")) $("level").textContent = state.upgradeLevel;
 }
-async function load(){try{state=await api("/state");render()}catch(e){alert(e.message)}}
-async function mine(e){
- try{state=await api("/mine",{method:"POST"});render();tg?.HapticFeedback?.impactOccurred("light")}
- catch(e){if(e.message!=="Недостаточно энергии")alert(e.message)}
+
+async function load() {
+  if (!tg?.initData) {
+    showError("Откройте TON Falcon через Telegram Mini App.");
+    return;
+  }
+  try {
+    state = await api("/state");
+    render();
+  } catch (e) {
+    showError(e.message);
+  }
 }
-async function upgrade(){try{state=await api("/upgrade",{method:"POST"});render();closeModal("mine")}catch(e){alert(e.message)}}
-async function boost(){try{state=await api("/boost",{method:"POST"});render()}catch(e){alert(e.message)}}
-async function claimDaily(){try{state=await api("/daily",{method:"POST"});render();alert("Ежедневный бонус начислен.")}catch(e){alert(e.message)}}
-async function watchAd(){
- if(!window.Adsgram){alert("Реклама пока недоступна.");return}
- try{
-   const ad=window.Adsgram.init({blockId:"47176"});
-   await ad.show();
-   state=await api("/ad-reward",{method:"POST"});
-   render();
-   alert("Реклама просмотрена. +50 🦅");
- }catch(e){alert("Реклама не была завершена.")}
+
+async function mine() {
+  try {
+    state = await api("/mine", { method: "POST", body: "{}" });
+    render();
+  } catch (e) { showError(e.message); }
 }
-async function withdraw(){
- const address=document.getElementById("tonAddress").value.trim();
- const amount=Number(document.getElementById("amount").value);
- try{
-   const data=await api("/withdraw",{method:"POST",body:JSON.stringify({address,amount})});
-   state=data.state;render();withdrawStatus.textContent="Заявка создана: "+data.requestId;
- }catch(e){withdrawStatus.textContent=e.message}
+
+async function upgrade() {
+  try {
+    state = await api("/upgrade", { method: "POST", body: "{}" });
+    render();
+  } catch (e) { showError(e.message); }
 }
-async function copyReferral(){
- try{const d=await api("/referral");await navigator.clipboard.writeText(d.link);alert("Ссылка скопирована")}catch(e){alert(e.message)}
+
+async function boost() {
+  try {
+    state = await api("/boost", { method: "POST", body: "{}" });
+    render();
+  } catch (e) { showError(e.message); }
 }
-function openModal(id){document.getElementById(id).style.display="flex"}
-function closeModal(id){document.getElementById(id).style.display="none"}
-setInterval(async()=>{try{state=await api("/state");render()}catch{}},15000);
+
+async function daily() {
+  try {
+    state = await api("/daily", { method: "POST", body: "{}" });
+    render();
+  } catch (e) { showError(e.message); }
+}
+
+async function rewardedAd() {
+  try {
+    const blockId = String(state?.adsBlockId || "");
+    if (!blockId) throw new Error("AdsGram Block ID не настроен.");
+
+    if (!window.Adsgram) throw new Error("AdsGram SDK ещё не загрузился.");
+
+    if (!ad) ad = window.Adsgram.init({ blockId });
+    await ad.show();
+
+    // Only after the Rewarded promise resolves do we request the reward.
+    state = await api("/ad-reward", { method: "POST", body: "{}" });
+    render();
+  } catch (e) {
+    showError(e.message || "Реклама не завершена.");
+  }
+}
+
+async function withdraw() {
+  const amount = Number($("withdrawAmount")?.value || 0);
+  const wallet = String($("withdrawWallet")?.value || "").trim();
+  try {
+    const data = await api("/withdraw", {
+      method: "POST",
+      body: JSON.stringify({ amount, wallet })
+    });
+    state = data.state;
+    render();
+    showError(`Заявка #${data.withdrawalId} создана.`);
+  } catch (e) { showError(e.message); }
+}
+
+window.mine = mine;
+window.upgrade = upgrade;
+window.boost = boost;
+window.daily = daily;
+window.rewardedAd = rewardedAd;
+window.withdraw = withdraw;
+
 load();
