@@ -1,50 +1,125 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>TON Falcon</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>TON Falcon</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<main class="app">
-  <header class="top">
-    <b>TON FALCON 🦅</b><span>Прибыль/час <strong id="profit">+0</strong></span>
-  </header>
 
-  <section class="cards">
-    <button onclick="claimDaily()">🎁<small>Ежедневная</small><em id="daily">Доступно</em></button>
-    <button onclick="watchAd()">🎬<small>Реклама</small><em>+50 🦅</em></button>
-    <button onclick="openModal('withdraw')">💸<small>Вывод</small><em>от 150 000</em></button>
-  </section>
+  <div class="app">
 
-  <section class="balance"><div>🦅 <span id="balance">0</span></div></section>
+    <header>
+      <h1>🦅 TON Falcon</h1>
+      <p>Mining Clicker</p>
+    </header>
 
-  <section class="miner" id="miner">
-    <button id="mineBtn" onclick="mine(event)">🦅</button>
-  </section>
+    <main>
 
-  <section class="energy">
-    <div><span>⚡ <b id="energy">1500/1500</b></span><button onclick="boost()">🚀 Boost</button></div>
-    <div class="bar"><i id="energyBar"></i></div>
-  </section>
-</main>
+      <section class="balance-card">
+        <div class="label">Баланс</div>
 
-<nav>
-<button class="active">🦅<small>Falcon</small></button>
-<button onclick="openModal('mine')">⛏️<small>Mine</small></button>
-<button onclick="openModal('friends')">👥<small>Friends</small></button>
-<button onclick="openModal('earn')">📋<small>Earn</small></button>
-<button onclick="openModal('withdraw')">💸<small>Wallet</small></button>
-</nav>
+        <div id="balance" class="balance">
+          0
+        </div>
 
-<div class="modal" id="mine"><div class="box"><button class="x" onclick="closeModal('mine')">×</button><h3>⛏️ Прокачка</h3><p>Уровень <b id="level">1</b></p><p>Цена: <b id="cost">100</b> 🦅</p><button class="primary" onclick="upgrade()">Улучшить</button></div></div>
-<div class="modal" id="friends"><div class="box"><button class="x" onclick="closeModal('friends')">×</button><h3>👥 Friends</h3><p>Приглашено: <b id="refs">0</b></p><button class="primary" onclick="copyReferral()">Скопировать ссылку</button></div></div>
-<div class="modal" id="earn"><div class="box"><button class="x" onclick="closeModal('earn')">×</button><h3>📋 Earn</h3><p>Задания подключаются через сервер. Награда выдаётся только после проверки.</p><button class="primary" onclick="closeModal('earn')">Понятно</button></div></div>
-<div class="modal" id="withdraw"><div class="box"><button class="x" onclick="closeModal('withdraw')">×</button><h3>💸 Вывод</h3><p>Минимум: 150 000 🦅</p><input id="tonAddress" placeholder="TON wallet / .ton"><input id="amount" type="number" min="150000" placeholder="150000"><button class="primary" onclick="withdraw()">Создать заявку</button><p id="withdrawStatus"></p></div></div>
+        <div class="currency">
+          $TONF
+        </div>
+      </section>
 
-<script src="app.js"></script>
+      <section class="stats">
+
+        <div class="stat">
+          <span>⚡ Энергия</span>
+          <strong id="energy">100/100</strong>
+        </div>
+
+        <div class="stat">
+          <span>⛏ Сила</span>
+          <strong id="power">1</strong>
+        </div>
+
+        <div class="stat">
+          <span>⭐ Уровень</span>
+          <strong id="level">0</strong>
+        </div>
+
+      </section>
+
+      <button
+        class="mine-button"
+        onclick="mine()"
+      >
+        ⛏ МАЙНИТЬ
+      </button>
+
+      <section class="buttons">
+
+        <button onclick="upgrade()">
+          ⬆️ Улучшить
+        </button>
+
+        <button onclick="boost()">
+          ⚡ Восстановить энергию
+        </button>
+
+        <button onclick="daily()">
+          🎁 Ежедневный бонус
+        </button>
+
+        <button onclick="rewardedAd()">
+          📺 Смотреть рекламу
+        </button>
+
+      </section>
+
+      <section class="withdraw-card">
+
+        <h2>💰 Вывод</h2>
+
+        <input
+          id="withdrawAmount"
+          type="number"
+          placeholder="Сумма"
+          min="150000"
+        >
+
+        <input
+          id="withdrawWallet"
+          type="text"
+          placeholder="TON кошелёк"
+        >
+
+        <button onclick="withdraw()">
+          💸 Создать заявку
+        </button>
+
+        <small>
+          Минимальная сумма: 150000 TONF
+        </small>
+
+      </section>
+
+    </main>
+
+    <footer>
+      TON Falcon
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+
 </body>
 </html>
