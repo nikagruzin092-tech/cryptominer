@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -19,14 +20,12 @@
 
 <div class="app">
 
-  <!-- Верхняя панель -->
   <div class="top">
     <span>🦅 TON Falcon</span>
     <b>$TONF</b>
     <strong id="level">LVL 0</strong>
   </div>
 
-  <!-- Карточки -->
   <div class="cards">
 
     <button onclick="boost()">
@@ -49,19 +48,14 @@
 
   </div>
 
-  <!-- Баланс -->
   <div class="balance">
     <span id="balance">0</span>
   </div>
 
-  <!-- Майнинг -->
   <div class="miner">
-    <button onclick="mine()">
-      🦅
-    </button>
+    <button onclick="mine()">🦅</button>
   </div>
 
-  <!-- Энергия -->
   <div class="energy">
 
     <div>
@@ -82,7 +76,6 @@
 
 </div>
 
-<!-- Нижнее меню -->
 <nav>
 
   <button class="active" onclick="closeAllModals()">
@@ -112,7 +105,6 @@
 
 </nav>
 
-<!-- Заработок -->
 <div class="modal" id="earnModal">
 
   <div class="box">
@@ -121,9 +113,7 @@
 
     <h3>🎁 Заработок</h3>
 
-    <p>
-      Получай дополнительные $TONF.
-    </p>
+    <p>Получай дополнительные $TONF.</p>
 
     <button
       class="primary"
@@ -143,7 +133,6 @@
 
 </div>
 
-<!-- Вывод -->
 <div class="modal" id="withdrawModal">
 
   <div class="box">
@@ -152,9 +141,7 @@
 
     <h3>💰 Вывод $TONF</h3>
 
-    <p>
-      Минимальная сумма: 150000 TONF
-    </p>
+    <p>Минимальная сумма: 150000 TONF</p>
 
     <input
       id="withdrawAmount"
@@ -181,7 +168,6 @@
 
 </div>
 
-<!-- Друзья -->
 <div class="modal" id="friendsModal">
 
   <div class="box">
@@ -190,9 +176,7 @@
 
     <h3>👥 Друзья</h3>
 
-    <p>
-      Приглашай друзей в TON Falcon.
-    </p>
+    <p>Приглашай друзей в TON Falcon.</p>
 
     <button
       class="primary"
@@ -246,38 +230,9 @@
       );
     }
   }
-
-  // Обновляем полоску энергии после получения состояния
-  const oldRender = window.render;
-
-  window.render = function() {
-    if (typeof oldRender === "function") {
-      oldRender();
-    }
-
-    const energy = document.getElementById("energy");
-    const energyText = document.getElementById("energyText");
-    const energyBar = document.getElementById("energyBar");
-
-    if (window.state) {
-      const current = Number(window.state.energy || 0);
-      const max = Number(window.state.maxEnergy || 100);
-
-      if (energy) {
-        energy.textContent = current + "/" + max;
-      }
-
-      if (energyText) {
-        energyText.textContent = current + "/" + max;
-      }
-
-      if (energyBar) {
-        energyBar.style.width =
-          Math.max(0, Math.min(100, current / max * 100)) + "%";
-      }
-    }
-  };
+</script>
 
 <script src="app.js"></script>
+
 </body>
 </html>
