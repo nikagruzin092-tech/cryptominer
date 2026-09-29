@@ -9,11 +9,12 @@ const API = "/api";
 
 let state = null;
 let ad = null;
+let busy = false;
 
 const $ = (id) => document.getElementById(id);
 
-function showError(message) {
-  console.error(message);
+function showMessage(message) {
+  console.log(message);
 
   if (tg?.showAlert) {
     tg.showAlert(String(message));
@@ -30,15 +31,15 @@ async function api(path, options = {}) {
 
   headers["X-Telegram-Init-Data"] = tg?.initData || "";
 
-  const res = await fetch(API + path, {
+  const response = await fetch(API + path, {
     ...options,
     headers
   });
 
-  const data = await res.json().catch(() => ({}));
+  const data = await response.json().catch(() => ({}));
 
-  if (!res.ok) {
-    throw new Error(data.error || `HTTP ${res.status}`);
+  if (!response.ok) {
+    throw new Error(data.error || `Ошибка HTTP ${response.status}`);
   }
 
   return data;
@@ -47,28 +48,53 @@ async function api(path, options = {}) {
 function render() {
   if (!state) return;
 
-  if ($("balance")) {
-    $("balance").textContent =
-      Number(state.balance).toLocaleString();
+  const balance = $("balance");
+  const energy = $("energy");
+  const energyText = $("energyText");
+  const energyBar = $("energyBar");
+  const power = $("power");
+  const level = $("level");
+
+  if (balance) {
+    balance.textContent =
+      Number(state.balance || 0).toLocaleString("ru-RU");
   }
 
-  if ($("energy")) {
-    $("energy").textContent =
-      `${state.energy}/${state.maxEnergy}`;
+  const currentEnergy = Number(state.energy || 0);
+  const maxEnergy = Number(state.maxEnergy || 100);
+
+  if (energy) {
+    energy.textContent = `${currentEnergy}/${maxEnergy}`;
   }
 
-  if ($("power")) {
-    $("power").textContent = state.power;
+  if (energyText) {
+    energyText.textContent = `${currentEnergy}/${maxEnergy}`;
   }
 
-  if ($("level")) {
-    $("level").textContent = state.upgradeLevel;
+  if (energyBar) {
+    const percent =
+      maxEnergy > 0
+        ? Math.max(
+            0,
+            Math.min(100, (currentEnergy / maxEnergy) * 100)
+          )
+        : 0;
+
+    energyBar.style.width = `${percent}%`;
+  }
+
+  if (power) {
+    power.textContent = Number(state.power || 1);
+  }
+
+  if (level) {
+    level.textContent = `LVL ${Number(state.upgradeLevel || 0)}`;
   }
 }
 
 async function load() {
   if (!tg?.initData) {
-    showError(
+    showMessage(
       "Откройте TON Falcon через мини-приложение Telegram."
     );
     return;
@@ -77,15 +103,27 @@ async function load() {
   try {
     const data = await api("/state");
 
+    if (!data.state) {
+      throw new Error("Сервер не вернул состояние игрока.");
+    }
+
     state = data.state;
 
     render();
-  } catch (e) {
-    showError(e.message);
+  } catch (error) {
+    showMessage(error.message);
   }
 }
 
+/* =========================
+   ⛏️ МАЙНИНГ
+========================= */
+
 async function mine() {
+  if (busy) return;
+
+  busy = true;
+
   try {
     const data = await api("/mine", {
       method: "POST",
@@ -95,12 +133,22 @@ async function mine() {
     state = data.state;
 
     render();
-  } catch (e) {
-    showError(e.message);
+  } catch (error) {
+    showMessage(error.message);
+  } finally {
+    busy = false;
   }
 }
 
+/* =========================
+   ⬆️ УЛУЧШЕНИЕ
+========================= */
+
 async function upgrade() {
+  if (busy) return;
+
+  busy = true;
+
   try {
     const data = await api("/upgrade", {
       method: "POST",
@@ -110,12 +158,28 @@ async function upgrade() {
     state = data.state;
 
     render();
-  } catch (e) {
-    showError(e.message);
+
+    if (data.message) {
+      showMessage(data.message);
+    } else {
+      showMessage("Улучшение успешно куплено!");
+    }
+  } catch (error) {
+    showMessage(error.message);
+  } finally {
+    busy = false;
   }
 }
 
+/* =========================
+   ⚡ ЭНЕРГИЯ
+========================= */
+
 async function boost() {
+  if (busy) return;
+
+  busy = true;
+
   try {
     const data = await api("/boost", {
       method: "POST",
@@ -125,12 +189,28 @@ async function boost() {
     state = data.state;
 
     render();
-  } catch (e) {
-    showError(e.message);
+
+    if (data.message) {
+      showMessage(data.message);
+    } else {
+      showMessage("Энергия восстановлена!");
+    }
+  } catch (error) {
+    showMessage(error.message);
+  } finally {
+    busy = false;
   }
 }
 
+/* =========================
+   🎁 ЕЖЕДНЕВНЫЙ БОНУС
+========================= */
+
 async function daily() {
+  if (busy) return;
+
+  busy = true;
+
   try {
     const data = await api("/daily", {
       method: "POST",
@@ -140,26 +220,38 @@ async function daily() {
     state = data.state;
 
     render();
-  } catch (e) {
-    showError(e.message);
+
+    if (data.message) {
+      showMessage(data.message);
+    } else {
+      showMessage("Ежедневный бонус получен!");
+    }
+  } catch (error) {
+    showMessage(error.message);
+  } finally {
+    busy = false;
   }
 }
 
-async function rewardedAd() {
-  try {
-    const blockId = String(
-      state?.adsBlockId || ""
-    );
+/* =========================
+   📺 ADSGRAM
+========================= */
 
-    if (!blockId) {
-      throw new Error(
-        "Идентификатор блока AdsGram не настроен."
-      );
+async function rewardedAd() {
+  if (busy) return;
+
+  try {
+    if (!state) {
+      throw new Error("Данные игрока ещё загружаются.");
     }
+
+    const blockId = String(
+      state.adsBlockId || "47862"
+    );
 
     if (!window.Adsgram) {
       throw new Error(
-        "AdsGram SDK ещё не загрузился."
+        "AdsGram ещё не загрузился. Попробуйте ещё раз."
       );
     }
 
@@ -168,6 +260,8 @@ async function rewardedAd() {
         blockId: blockId
       });
     }
+
+    busy = true;
 
     await ad.show();
 
@@ -180,21 +274,48 @@ async function rewardedAd() {
 
     render();
 
-  } catch (e) {
-    showError(
-      e.message || "Реклама не завершена."
+    if (data.message) {
+      showMessage(data.message);
+    } else {
+      showMessage("Награда за рекламу получена!");
+    }
+
+  } catch (error) {
+    console.error("AdsGram:", error);
+
+    showMessage(
+      error.message || "Реклама не была завершена."
     );
+  } finally {
+    busy = false;
   }
 }
 
+/* =========================
+   💰 ВЫВОД
+========================= */
+
 async function withdraw() {
+  const amountInput = $("withdrawAmount");
+  const walletInput = $("withdrawWallet");
+
   const amount = Number(
-    $("withdrawAmount")?.value || 0
+    amountInput?.value || 0
   );
 
   const wallet = String(
-    $("withdrawWallet")?.value || ""
+    walletInput?.value || ""
   ).trim();
+
+  if (!amount || amount <= 0) {
+    showMessage("Введите сумму для вывода.");
+    return;
+  }
+
+  if (!wallet) {
+    showMessage("Введите TON-кошелёк.");
+    return;
+  }
 
   try {
     const data = await api("/withdraw", {
@@ -209,14 +330,19 @@ async function withdraw() {
 
     render();
 
-    showError(
+    showMessage(
+      data.message ||
       `Заявка #${data.withdrawalId} создана.`
     );
 
-  } catch (e) {
-    showError(e.message);
+  } catch (error) {
+    showMessage(error.message);
   }
 }
+
+/* =========================
+   🌐 ГЛОБАЛЬНЫЕ КНОПКИ
+========================= */
 
 window.mine = mine;
 window.upgrade = upgrade;
@@ -224,5 +350,9 @@ window.boost = boost;
 window.daily = daily;
 window.rewardedAd = rewardedAd;
 window.withdraw = withdraw;
+
+/* =========================
+   🚀 ЗАПУСК
+========================= */
 
 load();
