@@ -1,5 +1,9 @@
 const tg = window.Telegram?.WebApp;
-
+console.log("Telegram WebApp:", !!tg);
+console.log(
+  "Telegram initData length:",
+  tg?.initData?.length || 0
+);
 if (tg) {
   tg.ready();
   tg.expand();
