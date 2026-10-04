@@ -41,10 +41,15 @@ async function api(path, options = {}) {
   });
 
   const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.error || `Ошибка HTTP ${response.status}`);
-  }
+if (!response.ok) {
+  throw new Error(
+    `Ошибка ${options.method || "GET"} ${API + path}: HTTP ${response.status}`
+  );
+}if (!response.ok) {
+  throw new Error(
+    `Ошибка ${options.method || "GET"} ${API + path}: HTTP ${response.status}`
+  );
+}
 
   return data;
 }
