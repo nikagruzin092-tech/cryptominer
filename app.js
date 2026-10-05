@@ -9,7 +9,7 @@ if (tg) {
   tg.expand();
 }
 
-const API = "/api";
+const API = "https://cryptominer-production-9a91.up.railway.app/api";
 
 let state = null;
 let ad = null;
