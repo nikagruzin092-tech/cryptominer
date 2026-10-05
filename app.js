@@ -45,10 +45,6 @@ if (!response.ok) {
   throw new Error(
     `Ошибка ${options.method || "GET"} ${API + path}: HTTP ${response.status}`
   );
-}if (!response.ok) {
-  throw new Error(
-    `Ошибка ${options.method || "GET"} ${API + path}: HTTP ${response.status}`
-  );
 }
 
   return data;
