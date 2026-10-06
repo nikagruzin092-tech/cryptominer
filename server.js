@@ -5,7 +5,24 @@ const Database = require("better-sqlite3");
 
 const app = express();
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || 3000);// CORS для Telegram Mini App
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,POST,OPTIONS"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, X-Telegram-Init-Data"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 const BOT_TOKEN = process.env.BOT_TOKEN || "";
 const ADS_BLOCK_ID = process.env.ADS_BLOCK_ID || "47862";
 
