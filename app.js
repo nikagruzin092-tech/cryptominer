@@ -11,17 +11,17 @@ document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>screen(b.dat
 async function load(){if(!tg?.initData){alertUser("Откройте TON Falcon через Telegram Mini App.");return}try{state=(await api("/state")).state;render()}catch(e){alertUser(e.message)}}
 $("mineButton").onclick=async()=>{
 
-  const btn=$("mineButton");
+  const icon=$("mineButton").querySelector(".falcon-icon");
 
-  btn.classList.remove("falcon-wing-animation");
+  if(icon){
+    icon.classList.remove("flying");
+    void icon.offsetWidth;
+    icon.classList.add("flying");
 
-  void btn.offsetWidth;
-
-  btn.classList.add("falcon-wing-animation");
-
-  setTimeout(()=>{
-    btn.classList.remove("falcon-wing-animation");
-  },350);
+    setTimeout(()=>{
+      icon.classList.remove("flying");
+    },350);
+  }
 
   try{
     const r=await api("/mine",{
