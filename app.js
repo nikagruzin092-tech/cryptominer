@@ -11,30 +11,7 @@ document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>screen(b.dat
 async function load(){if(!tg?.initData){alertUser("Откройте TON Falcon через Telegram Mini App.");return}try{state=(await api("/state")).state;render()}catch(e){alertUser(e.message)}}
 $let miningBusy=false;
 
-$("mineButton").onclick=async()=>{
-  if(miningBusy)return;
-  miningBusy=true;
-
-  try{
-    const r=await api("/mine",{
-      method:"POST",
-      body:"{}"
-    });
-
-    state=r.state;
-    render();
-    tg?.HapticFeedback?.impactOccurred("light");
-
-  }catch(e){
-    if(!String(e.message).includes("Слишком быстро")){
-      alertUser(e.message);
-    }
-  }finally{
-    setTimeout(()=>{
-      miningBusy=false;
-    },120);
-  }
-};
+$("mineButton").onclick=async()=>{try{const r=await api("/mine",{method:"POST",body:"{}"});state=r.state;render();tg?.HapticFeedback?.impactOccurred("light")}catch(e){alertUser(e.message)}};
 async function up(type){try{state=(await api("/upgrade",{method:"POST",body:JSON.stringify({type})})).state;render()}catch(e){alertUser(e.message)}}$("upgradePower").onclick=()=>up("power");$("upgradeEnergy").onclick=()=>up("energy");$("upgradeRegen").onclick=()=>up("regen");
 $("dailyButton").onclick=async()=>{try{state=(await api("/daily",{method:"POST",body:"{}"})).state;render();alertUser("Ежедневный бонус получен.")}catch(e){alertUser(e.message)}};
 $("adButton").onclick=async()=>{try{if(!window.Adsgram)throw Error("AdsGram SDK ещё не загрузился.");ad??=window.Adsgram.init({blockId:ADS_BLOCK_ID});await ad.show();state=(await api("/ad-reward",{method:"POST",body:"{}"})).state;render();alertUser("Бонус +50 TONF.")}catch(e){alertUser(e.message||"Реклама не завершена.")}};
