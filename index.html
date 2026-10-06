@@ -1,238 +1,32 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  >
-
-  <title>TON Falcon</title>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-<div class="app">
-
-  <div class="top">
-    <span>🦅 TON Falcon</span>
-    <b>$TONF</b>
-    <strong id="level">LVL 0</strong>
-  </div>
-
-  <div class="cards">
-
-    <button onclick="boost()">
-      ⚡
-      <small id="energy">100/100</small>
-      <em>Энергия</em>
-    </button>
-
-    <button onclick="upgrade()">
-      ⛏
-      <small id="power">1</small>
-      <em>Сила</em>
-    </button>
-
-    <button onclick="daily()">
-      🎁
-      <small>+1000</small>
-      <em>Бонус</em>
-    </button>
-
-  </div>
-
-  <div class="balance">
-    <span id="balance">0</span>
-  </div>
-
-  <div class="miner">
-    <button onclick="mine()">🦅</button>
-  </div>
-
-  <div class="energy">
-
-    <div>
-      <span>Энергия</span>
-
-      <button onclick="boost()">
-        Восстановить
-      </button>
-
-      <span id="energyText">100/100</span>
-    </div>
-
-    <div class="bar">
-      <i id="energyBar"></i>
-    </div>
-
-  </div>
-
-</div>
-
-<nav>
-
-  <button class="active" onclick="closeAllModals()">
-    ⛏
-    <small>Майнинг</small>
-  </button>
-
-  <button onclick="openEarn()">
-    🎁
-    <small>Заработок</small>
-  </button>
-
-  <button onclick="rewardedAd()">
-    📺
-    <small>Реклама</small>
-  </button>
-
-  <button onclick="openWithdraw()">
-    💰
-    <small>Вывод</small>
-  </button>
-
-  <button onclick="openFriends()">
-    👥
-    <small>Друзья</small>
-  </button>
-
-</nav>
-
-<div class="modal" id="earnModal">
-
-  <div class="box">
-
-    <button class="x" onclick="closeEarn()">×</button>
-
-    <h3>🎁 Заработок</h3>
-
-    <p>Получай дополнительные $TONF.</p>
-
-    <button
-      class="primary"
-      onclick="daily(); closeEarn();"
-    >
-      🎁 Получить ежедневный бонус
-    </button>
-
-    <button
-      class="primary"
-      onclick="rewardedAd(); closeEarn();"
-    >
-      📺 Смотреть рекламу
-    </button>
-
-  </div>
-
-</div>
-
-<div class="modal" id="withdrawModal">
-
-  <div class="box">
-
-    <button class="x" onclick="closeWithdraw()">×</button>
-
-    <h3>💰 Вывод $TONF</h3>
-
-    <p>Минимальная сумма: 150000 TONF</p>
-
-    <input
-      id="withdrawAmount"
-      type="number"
-      placeholder="Сумма"
-      min="150000"
-    >
-
-    <input
-      id="withdrawWallet"
-      type="text"
-      placeholder="TON кошелёк"
-      autocomplete="off"
-    >
-
-    <button
-      class="primary"
-      onclick="withdraw()"
-    >
-      💸 Создать заявку
-    </button>
-
-  </div>
-
-</div>
-
-<div class="modal" id="friendsModal">
-
-  <div class="box">
-
-    <button class="x" onclick="closeFriends()">×</button>
-
-    <h3>👥 Друзья</h3>
-
-    <p>Приглашай друзей в TON Falcon.</p>
-
-    <button
-      class="primary"
-      onclick="shareBot()"
-    >
-      📤 Пригласить друга
-    </button>
-
-  </div>
-
-</div>
-
-<script>
-  function closeAllModals() {
-    document.querySelectorAll(".modal").forEach(function(modal) {
-      modal.style.display = "none";
-    });
-  }
-
-  function openEarn() {
-    document.getElementById("earnModal").style.display = "flex";
-  }
-
-  function closeEarn() {
-    document.getElementById("earnModal").style.display = "none";
-  }
-
-  function openWithdraw() {
-    document.getElementById("withdrawModal").style.display = "flex";
-  }
-
-  function closeWithdraw() {
-    document.getElementById("withdrawModal").style.display = "none";
-  }
-
-  function openFriends() {
-    document.getElementById("friendsModal").style.display = "flex";
-  }
-
-  function closeFriends() {
-    document.getElementById("friendsModal").style.display = "none";
-  }
-
-  function shareBot() {
-    const url = "https://t.me/my_crypto_miner_game_bot";
-
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.openTelegramLink(
-        "https://t.me/share/url?url=" +
-        encodeURIComponent(url)
-      );
-    }
-  }
-</script>
-
-<script src="app.js"></script>
-
-</body>
-</html>
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#06101d"><title>TON Falcon — Mining Station</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script><link rel="stylesheet" href="style.css"></head>
+<body><div class="app">
+<header class="topbar"><div><div class="eyebrow">FALCON MINING NETWORK</div><h1>TON FALCON 🦅</h1><p id="status">Станция готова к работе</p></div><div class="level">LVL <b id="level">1</b></div></header>
+<main>
+<section id="screen-home" class="screen active">
+<div class="balance-card"><small>БАЛАНС</small><div id="balance">0</div><b>TONF</b><span>+<i id="passive">0</i> TONF / мин</span></div>
+<div class="stats"><div>МОЩНОСТЬ<b id="power">1</b></div><div>ЭНЕРГИЯ<b id="energy">1500/1500</b></div><div>ОПЫТ<b id="xp">0/100</b></div></div>
+<div class="energy"><i id="energyFill"></i></div>
+<div class="falcon-wrap"><button id="mineButton" class="falcon">🦅<strong>ДОБЫВАТЬ</strong><small>+<span id="clickReward">1</span> TONF</small></button></div><div id="floatLayer"></div>
+<div class="grid"><button data-screen="upgrade">⚙️<b>Оборудование</b><small>Развитие станции</small></button><button data-screen="contracts">🎯<b>Контракты</b><small><span id="contractCount">0</span> активных</small></button><button data-screen="bonus">🎁<b>Бонусы</b><small>Daily + Reward</small></button><button data-screen="history">📊<b>Статистика</b><small>История операций</small></button></div>
+</section>
+<section id="screen-upgrade" class="screen"><div class="head"><small>ENGINEERING</small><h2>Оборудование</h2></div>
+<div id="upgradeList">
+<article><b>⚡ Mining Core</b><p>Увеличивает награду за добычу.</p><button id="upgradePower">УЛУЧШИТЬ<br><small><span id="powerCost">100</span> TONF</small></button></article>
+<article><b>🔋 Energy Cell</b><p>Увеличивает максимальную энергию.</p><button id="upgradeEnergy">УЛУЧШИТЬ<br><small><span id="energyCost">250</span> TONF</small></button></article>
+<article><b>♻️ Cooler</b><p>Ускоряет восстановление энергии.</p><button id="upgradeRegen">УЛУЧШИТЬ<br><small><span id="regenCost">400</span> TONF</small></button></article></div></section>
+<section id="screen-contracts" class="screen"><div class="head"><small>MISSION CONTROL</small><h2>Контракты</h2></div><div id="contracts"></div></section>
+<section id="screen-bonus" class="screen"><div class="head"><small>REWARDS</small><h2>Бонусный центр</h2></div>
+<article class="reward"><b>🎁 Ежедневный бонус</b><p>Поддерживай серию активности.</p><button id="dailyButton">ПОЛУЧИТЬ</button><small id="dailyText"></small></article>
+<article class="reward"><b>📺 Reward-реклама</b><p>Добровольный бонус за полный просмотр. Реклама не блокирует игру.</p><button id="adButton">СМОТРЕТЬ +50</button></article>
+<article class="streak">🔥 Серия активности <b id="streak">0 дней</b></article></section>
+<section id="screen-history" class="screen"><div class="head"><small>ANALYTICS</small><h2>Статистика</h2></div><div class="analytics"><div>Всего добыто<b id="totalMined">0</b></div><div>Рекламных бонусов<b id="adCount">0</b></div><div>Приглашено<b id="refCount">0</b></div><div>Контрактов<b id="doneContracts">0</b></div></div><h3>Последние операции</h3><div id="history"></div></section>
+<section id="screen-friends" class="screen"><div class="head"><small>NETWORK</small><h2>Команда Falcon</h2></div><article class="center"><div class="big">👥</div><h3>Приглашай игроков</h3><p>Персональная ссылка привязана к твоему Telegram ID.</p><code id="refLink">Загрузка…</code><button id="copyRef">СКОПИРОВАТЬ</button><p>Активных участников: <b id="friendsCount">0</b></p></article></section>
+<section id="screen-wallet" class="screen"><div class="head"><small>TREASURY</small><h2>Кошелёк</h2></div><article class="wallet"><b id="walletBalance">0 TONF</b><label>TON-адрес</label><input id="walletAddress" placeholder="UQ... или name.ton"><label>Сумма TONF</label><input id="withdrawAmount" type="number" min="150000" placeholder="Минимум 150 000"><button id="withdrawButton">СОЗДАТЬ ЗАЯВКУ</button><small>Заявка резервирует баланс. Фактическая выплата выполняется после проверки.</small></article></section>
+</main></div>
+<nav class="nav"><button data-screen="home">🦅<span>Станция</span></button><button data-screen="upgrade">⚙️<span>Развитие</span></button><button data-screen="contracts">🎯<span>Задания</span></button><button data-screen="friends">👥<span>Команда</span></button><button data-screen="wallet">💰<span>Вывод</span></button></nav>
+<script src="app.js"></script></body></html>
