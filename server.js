@@ -274,7 +274,7 @@ app.post("/api/mine", auth, (req, res) => {
     const user = getOrCreateUser(req.tgUser);
 
     const now = Date.now();
-    const cooldown = 350;
+    const cooldown = 100;
 
     if (
       now - Number(user.last_mine || 0) <
