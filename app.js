@@ -9,13 +9,11 @@ function renderHistory(){const box=$("history");box.innerHTML=state.history.leng
 function screen(n){["home","upgrade","contracts","bonus","history","friends","wallet"].forEach(x=>{let e=$("screen-"+x);if(e)e.classList.toggle("active",x===n)});document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===n));scrollTo(0,0)}
 document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>screen(b.dataset.screen));
 async function load(){if(!tg?.initData){alertUser("Откройте TON Falcon через Telegram Mini App.");return}try{state=(await api("/state")).state;render()}catch(e){alertUser(e.message)}}
-$let miningBusy=false;
-
 $("mineButton").onclick=async()=>{try{const r=await api("/mine",{method:"POST",body:"{}"});state=r.state;render();tg?.HapticFeedback?.impactOccurred("light")}catch(e){alertUser(e.message)}};
 async function up(type){try{state=(await api("/upgrade",{method:"POST",body:JSON.stringify({type})})).state;render()}catch(e){alertUser(e.message)}}$("upgradePower").onclick=()=>up("power");$("upgradeEnergy").onclick=()=>up("energy");$("upgradeRegen").onclick=()=>up("regen");
 $("dailyButton").onclick=async()=>{try{state=(await api("/daily",{method:"POST",body:"{}"})).state;render();alertUser("Ежедневный бонус получен.")}catch(e){alertUser(e.message)}};
 $("adButton").onclick=async()=>{try{if(!window.Adsgram)throw Error("AdsGram SDK ещё не загрузился.");ad??=window.Adsgram.init({blockId:ADS_BLOCK_ID});await ad.show();state=(await api("/ad-reward",{method:"POST",body:"{}"})).state;render();alertUser("Бонус +50 TONF.")}catch(e){alertUser(e.message||"Реклама не завершена.")}};
-$("withdrawButton").onclick=async()=>{try{const amount=Number($("withdrawAmount").value||0),wallet=$("walletAddress").value.trim();const r=await api("/withdraw",{method:"POST",body:JSON.stringify({amount,wallet})});state=r.state;render();alertUser("Заявка #"+r.withdrawalId+" создана.")}catch(e){alertUser(e.message)}};
+$("withdrawButton").onclick=async()=>{try{const amount=Number($("withdrawAmount").value||0),wallet=$("walletAddress").value.trim();const r=await api("/withdraw",{method:"POST",body:JSON.stringify({amount,wallet}));state=r.state;render();alertUser("Заявка #"+r.withdrawalId+" создана.")}catch(e){alertUser(e.message)}};
 $("copyRef").onclick=async()=>{try{await navigator.clipboard.writeText(state.referralLink);alertUser("Ссылка скопирована.")}catch(e){alertUser("Не удалось скопировать.")}};
 setInterval(async()=>{if(state)try{state=(await api("/state")).state;render()}catch(e){}},15000);load();
 })();
